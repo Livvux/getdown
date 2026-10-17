@@ -13,6 +13,7 @@ services:
       JOB_TIMEOUT_SECONDS: 600
       FILE_TTL_MINUTES: 15
       TRUST_PROXY_HEADERS: 0
+      ADDITIONAL_ALLOWED_HOSTS: download.blender.org,test-streams.mux.dev
     networks:
       private:
         aliases: [getdown-app]

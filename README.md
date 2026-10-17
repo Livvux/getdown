@@ -11,6 +11,14 @@ An open-source, self-hosted web downloader for videos and audio. Built with **Ne
 - Automatic expiry of saved media; no user accounts or built-in analytics.
 - Responsive, keyboard-accessible UI with Docker deployment.
 
+## Screenshots
+
+| Analyze a link | Download in progress |
+| --- | --- |
+| ![Analyze a link](docs/screenshots/preview.png) | ![Download in progress](docs/screenshots/downloading.png) |
+
+![Download complete](docs/screenshots/completed.png)
+
 ## Quick start
 
 **Docker + Compose** (installs yt-dlp and FFmpeg):

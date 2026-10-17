@@ -35,6 +35,7 @@ type MediaInfo = {
 function subprocessEnvironment(): NodeJS.ProcessEnv {
   // Intentionally do not forward secrets, proxy variables, or arbitrary env.
   return {
+    NODE_ENV: process.env.NODE_ENV ?? "production",
     PATH: process.env.PATH || "/usr/local/bin:/usr/bin:/bin",
     HOME: "/tmp",
     LANG: "C.UTF-8",

@@ -101,10 +101,14 @@ function setupCleanup(): void {
   handle.unref();
 }
 
+function wasCancelled(job: Job): boolean {
+  return job.status === "cancelled";
+}
+
 async function run(job: Job): Promise<void> {
   try {
     await mkdir(config.downloadDir, { recursive: true });
-    if (job.status === "cancelled") return;
+    if (wasCancelled(job)) return;
 
     await runYtDlp(job.options, job.id, {
       onChild: (child) => {
@@ -112,7 +116,7 @@ async function run(job: Job): Promise<void> {
         if (job.status === "cancelled") child.kill("SIGTERM");
       },
       onProgress: (progress) => {
-        if (job.status === "cancelled") return;
+        if (wasCancelled(job)) return;
         if (progress.percent !== null) {
           // A download can have multiple streams; never report 100% before muxing.
           job.percent = Math.max(job.percent, Math.min(94, Math.floor(progress.percent * 0.94)));
@@ -128,11 +132,11 @@ async function run(job: Job): Promise<void> {
       },
     });
 
-    if (job.status === "cancelled") return;
+    if (wasCancelled(job)) return;
     job.status = "processing";
     job.percent = Math.max(job.percent, 95);
     const output = await getOutputFile(job.id, job.options.format);
-    if (job.status === "cancelled") return;
+    if (wasCancelled(job)) return;
     job.filePath = output.path;
     job.fileBytes = output.bytes;
     job.fileName = safeFilename(job.options.title) + "." + output.extension;

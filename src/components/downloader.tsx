@@ -2,6 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import Link from "next/link";
 import {
   ArrowDownToLine, ArrowRight, ArrowUpRight, Check, CheckCircle2,
   Clipboard, Clock3, FileVideo2, Github, Globe2, Headphones,
@@ -75,6 +76,8 @@ export default function Downloader() {
   const [cancelling, setCancelling] = useState(false);
   const requestId = useRef(0);
   const busy = job !== null && !TERMINAL.includes(job.status);
+  const currentJobId = job?.id;
+  const currentStatus = job?.status;
 
   useEffect(() => {
     try {
@@ -90,11 +93,11 @@ export default function Downloader() {
   }, []);
 
   useEffect(() => {
-    if (!job || TERMINAL.includes(job.status)) return;
+    if (!currentJobId || !currentStatus || TERMINAL.includes(currentStatus)) return;
     let disposed = false;
     const controller = new AbortController();
     const interval = setInterval(() => {
-      void fetch("/api/jobs/" + job.id, {
+      void fetch("/api/jobs/" + currentJobId, {
         cache: "no-store",
         signal: controller.signal,
       })
@@ -113,7 +116,7 @@ export default function Downloader() {
       clearInterval(interval);
       controller.abort();
     };
-  }, [job?.id, job?.status]);
+  }, [currentJobId, currentStatus]);
 
   const analyze = useCallback(async (event?: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
@@ -218,10 +221,10 @@ export default function Downloader() {
       <div className="background-grid" aria-hidden="true" />
       <div className="content-wrap">
         <header className="site-header">
-          <a className="brand" href="/" aria-label="getdown home">
+          <Link className="brand" href="/" aria-label="getdown home">
             <span className="brand-symbol"><ArrowDownToLine size={19} strokeWidth={2.6} /></span>
             <span>getdown<span className="brand-dot">.</span></span>
-          </a>
+          </Link>
           <nav className="top-nav" aria-label="Main navigation">
             <a href="#supported">Supported sites</a>
             <a className="github-link" href="https://github.com/Livvux/downloader" target="_blank" rel="noopener noreferrer">

@@ -4,7 +4,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "getdown. — Save media, simply.",
   description: "A private, open-source video and audio downloader powered by yt-dlp.",
-  robots: { index: false, follow: false },
   openGraph: {
     title: "getdown.",
     description: "Save the media you love. No account required.",

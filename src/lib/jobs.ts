@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
-import { mkdir, readdir, unlink } from "node:fs/promises";
+import { mkdir, readdir, stat, unlink } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { config } from "./config";
 import { getOutputFile, runYtDlp } from "./yt-dlp";
@@ -92,6 +92,30 @@ async function cleanupExpired(): Promise<void> {
     state.jobs.delete(id);
     await removeJobFiles(id);
   }
+
+  // Remove orphaned files left behind by restarts. Keep files belonging to
+  // active or recently completed jobs; only touch our UUID-prefixed outputs.
+  try {
+    const files = await readdir(config.downloadDir, { withFileTypes: true });
+    for (const file of files) {
+      if (!file.isFile() ||
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\./.test(file.name)) {
+        continue;
+      }
+      if (state.jobs.has(file.name.slice(0, 36))) continue;
+      const path = join(config.downloadDir, file.name);
+      try {
+        const details = await stat(path);
+        if (now - details.mtimeMs >= config.fileTtlMs) {
+          await unlink(path);
+        }
+      } catch {
+        // Another worker/cleanup invocation may have removed this file.
+      }
+    }
+  } catch {
+    // No download directory on a fresh instance.
+  }
 }
 
 function setupCleanup(): void {
@@ -99,6 +123,11 @@ function setupCleanup(): void {
   state.cleanupStarted = true;
   const handle = setInterval(() => void cleanupExpired(), 5 * 60_000);
   handle.unref();
+  void cleanupExpired();
+}
+
+export function startCleanup(): void {
+  setupCleanup();
 }
 
 function wasCancelled(job: Job): boolean {

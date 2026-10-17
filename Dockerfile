@@ -2,10 +2,11 @@
 FROM node:22-bookworm-slim AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
-COPY package.json ./
-RUN npm install --no-audit --no-fund
+RUN corepack enable && corepack install --global pnpm@12.9.1
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY . .
-RUN npm run build
+RUN pnpm build
 
 FROM node:22-bookworm-slim AS runner
 ENV NODE_ENV=production \

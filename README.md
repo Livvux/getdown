@@ -44,24 +44,27 @@ Open **http://localhost:3000**. Health check: **http://localhost:3000/api/health
 
 ~~~sh
 python3 -m pip install -U yt-dlp
-npm install
-npm run dev
+pnpm install --frozen-lockfile
+pnpm dev
 ~~~
 
 You can copy `.env.example` to `.env.local` and customize settings. The default non-Docker download directory is `/tmp/downloader-files`.
 
 ~~~sh
-npm run typecheck
-npm run lint
-npm run test
-npm run build
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
 ~~~
+
+Production at **https://down.livvux.dev** uses the isolated Dokploy setup documented in [deploy/README.md](deploy/README.md).
 
 ## Configuration
 
 | Environment variable | Default | Purpose |
 | --- | --- | --- |
 | `YT_DLP_BIN` | `yt-dlp` | Executable for yt-dlp |
+| `YT_DLP_PROXY` | empty | Optional HTTP proxy passed explicitly to yt-dlp |
 | `DOWNLOAD_DIR` | `/tmp/downloader-files` (Docker: `/data/downloads`) | Writable file storage |
 | `MAX_CONCURRENT_DOWNLOADS` | `2` | Concurrent workers |
 | `MAX_QUEUED_DOWNLOADS` | `12` | Queued jobs before rejecting requests |
@@ -101,7 +104,6 @@ The browser loads thumbnails from external sources. The app itself contains no a
 
 ## Known limitations
 
-- **Initial scaffold has no lockfile.** Run `npm install --package-lock-only` on a network-connected machine and commit `package-lock.json` for reproducible installation.
 - Restarting the app loses active job state; the file sweeper removes expired orphan media after a health check or new job initializes it.
 - No playlist, image-gallery, live-stream, login-required media or distributed worker support yet.
 - Merging/transcoding may take time after progress reaches the processing stage.

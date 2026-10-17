@@ -1,0 +1,19 @@
+http:
+  routers:
+    getdown-http:
+      rule: Host(`down.livvux.dev`)
+      entryPoints: [web]
+      middlewares: [redirect-to-https]
+      service: getdown
+    getdown-https:
+      rule: Host(`down.livvux.dev`)
+      entryPoints: [websecure]
+      service: getdown
+      tls:
+        certResolver: letsencrypt
+  services:
+    getdown:
+      loadBalancer:
+        servers:
+          - url: http://getdown-ingress:8080
+        passHostHeader: true

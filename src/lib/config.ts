@@ -11,6 +11,7 @@ function boundedEnv(name: string, fallback: number, min: number, max: number): n
 
 export const config = {
   ytDlpBin: process.env.YT_DLP_BIN || "yt-dlp",
+  ytDlpProxy: process.env.YT_DLP_PROXY || "",
   downloadDir: resolve(process.env.DOWNLOAD_DIR || "/tmp/downloader-files"),
   maxConcurrent: boundedEnv("MAX_CONCURRENT_DOWNLOADS", 2, 1, 8),
   maxQueued: boundedEnv("MAX_QUEUED_DOWNLOADS", 12, 1, 100),

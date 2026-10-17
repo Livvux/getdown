@@ -56,6 +56,8 @@ export async function inspectMedia(url: string): Promise<MediaPreview> {
       config.ytDlpBin,
       [
         "--no-config", "--no-playlist", "--skip-download",
+        "--js-runtimes", "node",
+        ...(config.ytDlpProxy ? ["--proxy", config.ytDlpProxy] : []),
         "--dump-single-json", "--socket-timeout", "12", "--retries", "1",
         "--", url,
       ],
@@ -118,6 +120,8 @@ export async function inspectMedia(url: string): Promise<MediaPreview> {
 export function buildDownloadArgs(options: DownloadOptions, id: string): string[] {
   const args = [
     "--no-config", "--no-playlist", "--no-overwrites", "--no-mtime",
+    "--js-runtimes", "node",
+    ...(config.ytDlpProxy ? ["--proxy", config.ytDlpProxy] : []),
     "--socket-timeout", "20", "--retries", "3", "--fragment-retries", "3",
     "--concurrent-fragments", "2", "--max-filesize", String(config.maxFileMb) + "M",
     "--match-filter", "duration <=? " + config.maxDurationSeconds,

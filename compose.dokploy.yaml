@@ -14,6 +14,9 @@ services:
       FILE_TTL_MINUTES: 15
       TRUST_PROXY_HEADERS: 0
     networks: [private]
+    depends_on:
+      egress:
+        condition: service_healthy
     read_only: true
     tmpfs:
       - /tmp:size=128m,mode=1777
@@ -49,6 +52,12 @@ services:
       dockerfile: deploy/Dockerfile.egress
     restart: unless-stopped
     networks: [private, outbound]
+    healthcheck:
+      test: [CMD-SHELL, "bash -c 'exec 3<>/dev/tcp/127.0.0.1/3128'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     read_only: true
     tmpfs: ["/tmp:size=16m,mode=1777"]
     mem_limit: 128m

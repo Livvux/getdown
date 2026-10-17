@@ -14,9 +14,11 @@ export const supportedPlatforms = [
   { name: "YouTube", host: "youtu.be" },
   { name: "TikTok", host: "tiktok.com" },
   { name: "Instagram", host: "instagram.com" },
+  { name: "Instagram", host: "instagr.am" },
   { name: "X / Twitter", host: "x.com" },
   { name: "X / Twitter", host: "twitter.com" },
   { name: "Reddit", host: "reddit.com" },
+  { name: "Reddit", host: "redd.it" },
   { name: "Vimeo", host: "vimeo.com" },
   { name: "Twitch", host: "twitch.tv" },
   { name: "SoundCloud", host: "soundcloud.com" },
@@ -40,7 +42,8 @@ const extraHosts = (process.env.ADDITIONAL_ALLOWED_HOSTS || "")
   .split(",")
   .map((host) => host.trim().toLowerCase())
   .filter((host) => /^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/.test(host))
-  .filter((host) => !host.endsWith(".local") && !host.endsWith(".internal"));
+  .filter((host) => !/^(?:\d{1,3}\.){3}\d{1,3}$/.test(host))
+  .filter((host) => ![".local", ".internal", ".localhost", ".test"].some((suffix) => host.endsWith(suffix)));
 
 function matchesHost(hostname: string, allowed: string): boolean {
   return hostname === allowed || hostname.endsWith("." + allowed);

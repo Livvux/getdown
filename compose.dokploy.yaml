@@ -13,7 +13,9 @@ services:
       JOB_TIMEOUT_SECONDS: 600
       FILE_TTL_MINUTES: 15
       TRUST_PROXY_HEADERS: 0
-    networks: [private]
+    networks:
+      private:
+        aliases: [getdown-app]
     depends_on:
       egress:
         condition: service_healthy
@@ -27,12 +29,12 @@ services:
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
   ingress:
-    image: nginx:1.28-alpine
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.ingress
     restart: unless-stopped
     user: "101:101"
     entrypoint: [nginx, -g, "daemon off;"]
-    volumes:
-      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
       private: {}
       dokploy-network:

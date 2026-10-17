@@ -160,8 +160,8 @@ export async function runYtDlp(
       shell: false,
       windowsHide: true,
       env: subprocessEnvironment(),
-      stdio: ["ignore", "pipe", "pipe"],
     });
+    child.stdin.end();
     handlers.onChild(child);
     let timedOut = false;
     let settled = false;

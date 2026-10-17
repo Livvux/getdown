@@ -310,6 +310,7 @@ a, button, input, select { -webkit-tap-highlight-color: transparent; }
 .option-heading { margin: 27px 0 13px; color: #a4b3a9; font-weight: 750; font-size: 11px; letter-spacing: 1.1px; }
 .format-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .format-option {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -442,7 +443,7 @@ a, button, input, select { -webkit-tap-highlight-color: transparent; }
   .format-grid { gap: 7px; }
   .format-option { padding: 12px 9px; gap: 5px; flex-direction: column; align-items: flex-start; min-height: 110px; }
   .format-text small { margin-top: 3px; }
-  .selection-indicator { position: absolute; margin-left: 0; transform: translate(50px, -1px); }
+  .selection-indicator { position: absolute; right: 9px; top: 9px; margin-left: 0; transform: none; }
   .quality-row { flex-direction: column; align-items: stretch; gap: 12px; }
   .quality-row select { width: 100%; }
   .supported-section { padding: 44px 0 35px; }

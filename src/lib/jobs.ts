@@ -51,7 +51,7 @@ type PublicJob = {
 };
 
 const scope = globalThis as typeof globalThis & { __downloaderState?: ManagerState };
-const state = scope.__downloaderState ?? {
+const state: ManagerState = scope.__downloaderState ?? {
   jobs: new Map<string, Job>(),
   queue: [],
   active: 0,

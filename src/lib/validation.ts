@@ -1,7 +1,9 @@
 export class InputError extends Error {
-  constructor(message: string, readonly status = 400) {
+  readonly status: number;
+  constructor(message: string, status = 400) {
     super(message);
     this.name = "InputError";
+    this.status = status;
   }
 }
 

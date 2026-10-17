@@ -1,0 +1,28 @@
+services:
+  downloader:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      YT_DLP_BIN: yt-dlp
+      DOWNLOAD_DIR: /data/downloads
+      MAX_CONCURRENT_DOWNLOADS: ${MAX_CONCURRENT_DOWNLOADS:-2}
+      MAX_QUEUED_DOWNLOADS: ${MAX_QUEUED_DOWNLOADS:-12}
+      MAX_FILE_MB: ${MAX_FILE_MB:-500}
+      MAX_DURATION_SECONDS: ${MAX_DURATION_SECONDS:-7200}
+      JOB_TIMEOUT_SECONDS: ${JOB_TIMEOUT_SECONDS:-1800}
+      FILE_TTL_MINUTES: ${FILE_TTL_MINUTES:-60}
+      TRUST_PROXY_HEADERS: ${TRUST_PROXY_HEADERS:-0}
+      ADDITIONAL_ALLOWED_HOSTS: ${ADDITIONAL_ALLOWED_HOSTS:-}
+    volumes:
+      - downloader-files:/data/downloads
+    restart: unless-stopped
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 128
+
+volumes:
+  downloader-files:

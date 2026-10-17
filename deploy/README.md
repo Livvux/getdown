@@ -29,7 +29,7 @@ After deployment, verify:
 
 No automatic release claim follows from a Git push. Check the Dokploy deployment status and the live app explicitly. Downloads already running are interrupted by recreation; redeploy when the queue is idle.
 
-Third-party availability is separate from deployment health. The tested YouTube URL requested bot verification from this VPS, and the tested Vimeo URL required login. The app deliberately has no user-cookie or login bypass.
+Third-party availability is separate from deployment health. Direct VPS egress and the tested Berlin/Dusseldorf Mullvad exits requested YouTube bot verification. The configured Amsterdam exit successfully downloaded the public Blender YouTube test video: 25,786,915-byte MP4, 640×360 AV1/AAC, 634.62 seconds, saved through the public browser with HTTP 200. The tested Vimeo URL required login. The app deliberately has no user-cookie or login bypass.
 
 ## Mullvad egress through the existing Tailscale host
 
@@ -44,12 +44,14 @@ install -m 644 deploy/getdown-mullvad.service deploy/getdown-mullvad-firewall.se
 mkdir -p /etc/systemd/system/docker.service.d /etc/systemd/system/tailscaled.service.d
 install -m 644 deploy/getdown-mullvad-docker.conf /etc/systemd/system/docker.service.d/getdown-mullvad.conf
 install -m 644 deploy/getdown-mullvad-tailscaled.conf /etc/systemd/system/tailscaled.service.d/getdown-mullvad.conf
-printf '%s\n' 'MULLVAD_EXIT_NODE=100.117.47.8' > /etc/getdown-mullvad.conf
+printf '%s\n' 'MULLVAD_EXIT_NODE=100.123.199.85' > /etc/getdown-mullvad.conf
 systemctl daemon-reload
 systemctl enable --now getdown-mullvad-firewall.service
 systemctl enable --now getdown-mullvad.service
 ```
 
-Managed exit ownership persists under `/var/lib/getdown-mullvad`; host-preserving policy rules are restored before Tailscale starts after an unclean reboot. The independent nftables forwarding guard starts before Docker, so automatic container restarts cannot leak direct traffic. Stopping the VPN service leaves this guard installed and downloads fail closed. `getdown-mullvad rollback` restores host exit-node selection and removes owned policy routes/NAT; it deliberately retains the forwarding guard. Do not delete the guard while the proxy is attached to this network. The script refuses exit-node selections not owned by this installation. Routing priorities 5260–5264 are reserved for this service; check they are unused before first installation.
+Managed exit ownership persists under `/var/lib/getdown-mullvad`; host-preserving policy rules are restored before Tailscale starts after an unclean reboot. The independent nftables forwarding guard starts before Docker, so automatic container restarts cannot leak direct traffic. Stopping the VPN service leaves this guard installed and downloads fail closed. `getdown-mullvad rollback` restores host exit-node selection and removes owned policy routes/NAT; it deliberately retains the forwarding guard. Do not delete the guard while the proxy is attached to this network. The script refuses exit-node selections not owned by this installation. Routing priorities 5259–5264 are reserved for this service; check they are unused before first installation.
 
 Before changing the selected exit, schedule a short systemd rollback timer and verify a fresh SSH connection, host public IP, public health, host/tailnet DNS, and an unrelated container. Cancel the timer only after verification. Quad100 DNS belongs to the shared host identity and can follow Tailscale exit-node DNS behavior; source policy routing isolates data traffic, not a separate DNS identity.
+
+When migrating an existing deployment from the old generated outbound network, recreate `egress` and `app` once with `docker compose -p compose-program-redundant-alarm-n7oovf -f compose.dokploy.yaml up -d --force-recreate egress app` from the Dokploy code directory. Docker can otherwise retain the removed network mode on the old proxy container.

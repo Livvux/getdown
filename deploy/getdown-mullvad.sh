@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# This service owns only these priorities, this chain, and getdown's source net.
+# This service owns only these priorities,  getdown's source net.
 SUBNET=192.168.240.0/28
 STATE=/var/lib/getdown-mullvad/exit-id
 CONFIG=/etc/getdown-mullvad.conf
@@ -17,7 +17,7 @@ ensure_rule() {
 remove_rules() {
   local family priority
   for family in -4 -6; do
-    for priority in 5260 5261 5262 5263 5264; do
+    for priority in 5259 5260 5261 5262 5263 5264; do
       while ip "$family" rule show priority "$priority" | grep -q .; do
         ip "$family" rule del priority "$priority"
       done
@@ -41,6 +41,8 @@ stop_vpn() {
 prepare_routes() {
     # Keep all other host/container traffic on its existing main route.
     # More-specific tailnet/subnet routes still come from Tailscale table 52.
+    # Preserve bridge neighbor reachability before the exit-table fallback.
+    ensure_rule -4 5259 from "$SUBNET" to "$SUBNET" lookup main
     ensure_rule -4 5260 from "$SUBNET" lookup 52
     ensure_rule -4 5261 from "$SUBNET" unreachable
     for family in -4 -6; do

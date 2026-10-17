@@ -70,6 +70,12 @@ services:
 networks:
   private:
     internal: true
-  outbound: {}
+  outbound:
+    name: getdown-mullvad-egress
+    driver_opts:
+      com.docker.network.bridge.name: br-getdown-vpn
+    ipam:
+      config:
+        - subnet: 192.168.240.0/28
   dokploy-network:
     external: true

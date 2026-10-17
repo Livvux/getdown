@@ -1,0 +1,16 @@
+[Unit]
+Description=Route only getdown media egress through Tailscale Mullvad
+After=network-online.target docker.service tailscaled.service
+Requires=docker.service tailscaled.service
+PartOf=docker.service tailscaled.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/getdown-mullvad start
+ExecStop=/usr/local/sbin/getdown-mullvad stop
+TimeoutStartSec=45
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

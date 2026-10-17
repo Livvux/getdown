@@ -1,0 +1,12 @@
+[Unit]
+Description=Fail-closed forwarding guard for getdown
+Before=docker.service tailscaled.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/nft -f /etc/getdown-mullvad.nft
+ExecStart=/usr/local/sbin/getdown-mullvad prepare
+
+[Install]
+WantedBy=multi-user.target

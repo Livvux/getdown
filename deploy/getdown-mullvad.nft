@@ -1,0 +1,8 @@
+add table inet getdown_mullvad
+flush table inet getdown_mullvad
+table inet getdown_mullvad {
+  chain forward {
+    type filter hook forward priority -10; policy accept;
+    ip saddr 192.168.240.0/28 oifname != "tailscale0" reject
+  }
+}

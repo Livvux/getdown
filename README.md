@@ -13,11 +13,22 @@ An open-source, self-hosted web downloader for videos and audio. Built with **Ne
 
 ## Screenshots
 
-| Analyze a link | Download in progress |
+Actual browser captures of the redesigned interface. Download states use fixed demonstration data; these images do not represent a completed live download.
+
+![Desktop homepage](docs/screenshots/home.png)
+
+| Media preview and format selection | Download in progress |
 | --- | --- |
-| ![Analyze a link](docs/screenshots/preview.png) | ![Download in progress](docs/screenshots/downloading.png) |
+| ![Media preview](docs/screenshots/preview.png) | ![Download in progress](docs/screenshots/downloading.png) |
 
 ![Download complete](docs/screenshots/completed.png)
+
+<details>
+<summary>Mobile homepage</summary>
+
+![Mobile homepage](docs/screenshots/mobile.png)
+
+</details>
 
 ## Quick start
 
